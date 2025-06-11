@@ -18,6 +18,8 @@ interval = {
     "3d": 3,
     "1w": 7,
     "1m": 30,
+    "3m": 90,
+    "6m": 180,
 }
 
 with open("popular_stocks.json", "r") as file:
