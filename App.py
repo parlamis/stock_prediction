@@ -1,8 +1,6 @@
 import streamlit as st
 import yfinance as yf
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.stattools import adfuller
+import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -44,7 +42,7 @@ if st.button("Analyze"):
         order_aic_bic = []
         for p in range(3):
             for q in range(3):
-                model = ARIMA(df_close, order=(p,0,q))
+                model = sm.tsa.arima.ARIMA(df_close, order=(p,0,q))
                 results = model.fit()
                 order_aic_bic.append((p, q, results.aic, results.bic))
 
@@ -53,7 +51,7 @@ if st.button("Analyze"):
         p = order_rate[0]
         q = order_rate[1]
 
-        arima = ARIMA(df_close, order=(p,0,q))
+        arima = sm.tsa.arima.ARIMA(df_close, order=(p,0,q))
         results = arima.fit()
 
         steps_2 = int(df_close.shape[0]*0.2)
