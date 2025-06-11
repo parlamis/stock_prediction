@@ -1,6 +1,6 @@
 streamlit
 yfinance
-statsmodels==0.13.5
+statsmodels==0.12.1
 matplotlib
 pandas
 numpy==1.22.0
