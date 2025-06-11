@@ -2,7 +2,7 @@ streamlit
 yfinance
 statsmodels==0.12.1
 matplotlib
-pandas
+pandas==1.5.3
 numpy==1.22.0
 scikit-learn
 plotly
