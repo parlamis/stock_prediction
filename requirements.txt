@@ -4,5 +4,5 @@ statsmodels==0.12.1
 matplotlib
 pandas
 numpy==1.22.0
-sklearn
+scikit-learn
 plotly
