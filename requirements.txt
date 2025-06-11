@@ -1,6 +1,6 @@
 streamlit
 yfinance
-statsmodels.tsa.arima.model
+statsmodels==0.13.5
 matplotlib
 pandas
 numpy==1.22.0
