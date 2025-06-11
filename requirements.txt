@@ -1,1 +1,8 @@
+streamlit
 yfinance
+statsmodels
+matplotlib
+pandas
+numpy==1.22.0
+sklearn
+plotly
