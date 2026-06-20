@@ -63,7 +63,7 @@ stock_prediction/
 
 ---
 
-## Running the App Locally
+## How to Run
 
 ### 1. Prerequisites
 
