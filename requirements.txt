@@ -1,7 +1,6 @@
 streamlit
 yfinance
 statsmodels==0.12.1
-matplotlib
 pandas==1.5.3
 numpy==1.22.0
 scikit-learn==1.2.2

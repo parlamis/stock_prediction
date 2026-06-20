@@ -27,7 +27,21 @@ popular_stocks = pd.DataFrame(popular_stocks_json.keys())
 st.title("🚀 Stock Prediction App ARIMA 📈")
 st.markdown("Powered by ARIMA time series modeling, this app provides predictive analytics for major NASDAQ and NYSE-listed stocks, helping users gain insight into potential future price trends.")
 
-selected_ticker = st.selectbox("Select Stock Ticker", popular_stocks, index=0)
+input_mode = st.radio(
+    "Choose Ticker Input Method",
+    ["Select from popular stocks", "Enter ticker manually"],
+    index=0
+)
+
+if input_mode == "Select from popular stocks":
+    selected_ticker = st.selectbox("Select Stock Ticker", popular_stocks, index=0)
+else:
+    custom_ticker = st.text_input(
+        "Enter Stock Ticker (e.g. AAPL, MSFT, THYAO.IS)",
+        value=""
+    ).strip().upper()
+    selected_ticker = custom_ticker
+
 selected_time = st.selectbox("Select Forecasting Interval", interval, index=0)
 
 
@@ -76,7 +90,7 @@ if st.button("Analyze"):
 
         ###########################PERFORMANCE METRICS###########################
         mae = mean_absolute_error(actual_mean, prediction_mean)
-        rmse = mean_squared_error(actual_mean, prediction_mean, squared=False)
+        rmse = np.sqrt(mean_squared_error(actual_mean, prediction_mean))
         mape = mean_absolute_percentage_error(actual_mean, prediction_mean)
         mape = mape * 100
 
