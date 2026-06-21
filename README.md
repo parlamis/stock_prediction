@@ -157,6 +157,7 @@ This project is actively open to development and expansion. Contributions in the
 - **Additional metrics and visualizations:** New performance metrics, residual analysis plots, or model comparison panels.
 - **Performance improvements:** Speeding up the grid search through parallelization or caching.
 
+---
 
 ## Disclaimer
 
