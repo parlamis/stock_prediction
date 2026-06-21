@@ -1,7 +1,6 @@
 import streamlit as st
 import yfinance as yf
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
@@ -71,6 +70,7 @@ if st.button("Analyze"):
         steps_2 = int(df_close.shape[0]*0.2)
         steps_9 = int(df_close.shape[0]*0.9)
 
+
         date = df_close.index[-1] + timedelta(days=1)
         date = date.strftime("%Y-%m-%d")
 
@@ -79,6 +79,7 @@ if st.button("Analyze"):
         actual_mean = df_close.tail(steps_2)
         actual_mean = pd.DataFrame(actual_mean)
         actual_list = actual_mean[f"{ticker_name}"].tolist()
+
 
         confidence_interval = prediction.conf_int()
         conf_lower = confidence_interval.iloc[:,0]
@@ -90,13 +91,13 @@ if st.button("Analyze"):
 
         ###########################PERFORMANCE METRICS###########################
         mae = mean_absolute_error(actual_mean, prediction_mean)
-        rmse = np.sqrt(mean_squared_error(actual_mean, prediction_mean))
+        Rmse = np.sqrt(mean_squared_error(actual_mean, prediction_mean))
         mape = mean_absolute_percentage_error(actual_mean, prediction_mean)
         mape = mape * 100
 
         table_metric = {
             "Metric": ["MAE", "RMSE", "MAPE (%)"],
-            "Value": [f"{mae:.2f}", f"{rmse:.2f}", f"{mape:.2f}"],
+            "Value": [f"{mae:.2f}", f"{Rmse:.2f}", f"{mape:.2f}"],
         }
 
         df_metric = pd.DataFrame(table_metric, index=["MAE", "RMSE", "MAPE (%)"], columns=["Value"])
@@ -106,24 +107,98 @@ if st.button("Analyze"):
         forecast_date = pd.date_range(start=date, periods=len(forecast_mean), freq="D")
         forecast_series = pd.Series(forecast_mean.values, index=forecast_date, name="Forecasted Value")
 
-        fig, ax = plt.subplots()
-        ax.plot(df_close.index[steps_9:], df_close[steps_9:], label="Closed Price")
-        ax.plot(forecast_series.index, forecast_series, label="Forecasted Price")
-        ax.set_title(f"{selected_ticker} Forecasted Price")
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Price")
-        ax.legend()
-        st.plotly_chart(fig)
+
+        # Forecasted Graph
+        forecast_fig = go.Figure()
+
+        forecast_fig.add_trace(
+            go.Scatter(
+                x=df_close.index[steps_9:],
+                y=df_close.iloc[steps_9:,0].tolist(),
+                mode="lines",
+                name="Closed Price"
+            )
+        )
+
+        forecast_fig.add_trace(
+            go.Scatter(
+                x=forecast_series.index[:],
+                y=forecast_series.values.tolist(),
+                mode="lines",
+                name="Forecasted Price"
+            )
+        )
+
+        forecast_fig.update_layout(
+            title=f"{selected_ticker} Forecasted Price",
+            xaxis_title="Date",
+            yaxis_title="Price",
+            template="plotly_white",
+            hovermode="x unified"
+        )
+
+        st.plotly_chart(forecast_fig, use_container_width=True)
 
         st.table(pd.Series(forecast_mean.values, index=forecast_date.strftime("%Y-%m-%d"), name="Forecasted Value"))
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=prediction_mean.index, y=conf_lower_list, mode='lines', line_color="pink", name="Lower Bound"))
-        fig.add_trace(go.Scatter(x=prediction_mean.index, y=conf_upper_list, fill="tonexty", fillcolor="pink", mode='lines', line_color="pink", name="Upper Bound"))
-        fig.add_trace(go.Scatter(x=prediction_mean.index, y=prediction_list, mode="lines", line_color="red", name="Prediction Price"))
-        fig.add_trace(go.Scatter(x=prediction_mean.index, y=actual_list, mode="lines", line_color="blue", name="Test Price"))
-        fig.update_layout(title='Predicted Price and Confidence Interval',xaxis_title='Date',yaxis_title='Price',template='plotly_white')
-        st.plotly_chart(fig)
+        # Prediction Graph
+        prediction_fig = go.Figure()
+
+        # Lower Bound
+        prediction_fig.add_trace(
+            go.Scatter(
+                x=prediction_mean.index,
+                y=conf_lower_list,
+                mode="lines",
+                line=dict(width=0),
+                showlegend=False,
+                hoverinfo="skip"
+            )
+        )
+
+        # Upper Bound + filling
+        prediction_fig.add_trace(
+            go.Scatter(
+                x=prediction_mean.index,
+                y=conf_upper_list,
+                mode="lines",
+                fill="tonexty",
+                fillcolor="rgba(255,0,0,0.15)",
+                line=dict(width=0),
+                name="95% Confidence Interval"
+            )
+        )
+
+        # Prediction
+        prediction_fig.add_trace(
+            go.Scatter(
+                x=prediction_mean.index,
+                y=prediction_list,
+                mode="lines",
+                name="Predicted Price"
+            )
+        )
+
+        # Actual Price
+        prediction_fig.add_trace(
+            go.Scatter(
+                x=prediction_mean.index,
+                y=actual_list,
+                mode="lines",
+                name="Actual Price"
+            )
+        )
+
+        prediction_fig.update_layout(
+            title="Predicted Price vs Actual Price",
+            xaxis_title="Date",
+            yaxis_title="Price",
+            template="plotly_white",
+            hovermode="x unified"
+        )
+
+        st.plotly_chart(prediction_fig, use_container_width=True)
+
 
         st.table(df_metric)
 
@@ -133,8 +208,8 @@ if st.button("Analyze"):
     with st.spinner("Model is running..."):
         stock_info(popular_stocks_json[selected_ticker], interval[selected_time])
 
-
-
+st.subheader("Disclaimer", divider="gray")
+st.markdown("This application is for **educational and informational purposes only**. ARIMA forecasts of financial markets are inherently uncertain, and short-horizon price predictions should **not** be used as the basis for investment decisions. Past performance and backtested accuracy do not guarantee future results.")
 
 
 

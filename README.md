@@ -138,9 +138,25 @@ Streamlit will start a local server and automatically open the app in your brows
 | `statsmodels` | ARIMA model fitting |
 | `scikit-learn` | Error metrics (MAE, RMSE, MAPE) |
 | `pandas`, `numpy` | Data handling and numerics |
-| `plotly`, `matplotlib` | Charting |
+| `plotly` | Charting |
 
 ---
+
+## Contributing
+
+Contributions of all kinds are welcome! Whether it's a bug fix, a new feature, or a documentation improvement, feel free to open issues and pull requests.
+
+### Future Development Ideas
+
+This project is actively open to development and expansion. Contributions in the following directions are especially valued:
+
+- **Seasonal models (SARIMA):** The current model runs with `d = 0` and effectively fits an ARMA model to raw prices. Adding models that capture seasonality — such as **SARIMA** (Seasonal ARIMA) — could improve forecast quality on series with recurring periodic patterns. Introducing the seasonal parameters `(P, D, Q, s)` is a natural extension.
+- **Automatic parameter selection:** Integrating `pmdarima.auto_arima` to automatically select the `d` parameter and seasonal terms.
+- **Differencing support (`d ≥ 1`):** Adding differencing to improve performance on strongly trending series.
+- **Alternative models:** Optionally offering different forecasting approaches such as Prophet, LSTM, or GARCH.
+- **Additional metrics and visualizations:** New performance metrics, residual analysis plots, or model comparison panels.
+- **Performance improvements:** Speeding up the grid search through parallelization or caching.
+
 
 ## Disclaimer
 
